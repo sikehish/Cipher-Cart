@@ -17,7 +17,8 @@ def decrypt(ciphertext, secret_key):
 
 if __name__ == '__main__':
     secret_key = input("Enter secret key: ") 
-    plaintext = bytes(input("Enter plaintext: "),encoding='utf-8')
+    plaintext = input("Enter plaintext: ").encode('utf-8')
+    # OR plaintext = bytes(input("Enter plaintext: "),encoding='utf-8')
     
     ciphertext = encrypt(plaintext, secret_key)
     decrypted_text = decrypt(ciphertext, secret_key)
