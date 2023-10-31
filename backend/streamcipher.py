@@ -18,9 +18,13 @@ def decrypt(ciphertext, secret_key):
     plaintext = bytes(c ^ k for c, k in zip(ciphertext, keystream))
     return plaintext
 
+def faded_default_text(text):
+    return f"\033[90m{text}\033[0m"  # \033[90m sets text color to gray. It adds ANSI color codes to set the text color to gray
+
+
 @click.command()
 def main():
-    os.system('cls' if os.name == 'nt' else 'clear')  
+    os.system('cls' if os.name == 'nt' else 'clear') #Clears the system console 
 
     banner = r'''
  ________  ___  ________  ___  ___  _______   ________          ________  ________  ________  _________   
@@ -33,11 +37,11 @@ def main():
     '''
     
     click.echo(colored(banner, 'cyan'))
-    click.echo('Cipher Cart - Secure Data Encryption/Decryption')
+    click.echo('Cipher Cart - Secure Data using Stream Cipher')
     click.echo('---------------------------------------------')
 
-    secret_key = click.prompt('Enter Secret Key', default=str(random.getrandbits(64)), show_default=True)
-    plaintext = click.prompt('Enter Plain Text', default='Hello World!', show_default=True)
+    secret_key = click.prompt('Enter Secret Key', default=faded_default_text(str(random.getrandbits(64))))
+    plaintext = click.prompt('Enter Plain Text', default=faded_default_text('Hello World!'))
 
     ciphertext = encrypt(plaintext.encode('utf-8'), secret_key)
     decrypted_text = decrypt(ciphertext, secret_key)
