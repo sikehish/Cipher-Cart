@@ -40,8 +40,12 @@ def main():
     plaintext = click.prompt('Enter Plain Text', default='Hello World!', show_default=True)
 
     ciphertext = encrypt(plaintext.encode('utf-8'), secret_key)
+    decrypted_text = decrypt(ciphertext, secret_key)
+
     
     click.echo(f'Ciphertext: {colored(ciphertext.hex(), "green")}')
+    click.echo(f'Decrypted Text: {colored(decrypted_text.decode("utf-8"), "green")}')
+    click.echo('---------------------------------------------')
 
 
 if __name__ == '__main__':
