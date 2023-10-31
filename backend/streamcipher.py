@@ -1,10 +1,8 @@
+import random
+
 def generate_keystream(secret_key, length):
-    # A simple keystream generator using a pseudo-random key.
-    keystream = []
-    key_length = len(secret_key)
-    for i in range(length):
-        keystream.append(secret_key[i % key_length])
-    print("Output ", keystream)
+    random.seed(secret_key) 
+    keystream = [random.randint(0, 255) for _ in range(length)]  
     return bytes(keystream)
 
 def encrypt(plaintext, secret_key):
@@ -17,14 +15,13 @@ def decrypt(ciphertext, secret_key):
     plaintext = bytes(c ^ k for c, k in zip(ciphertext, keystream))
     return plaintext
 
-if __name__ == "__main__":
-    secret_key = b'\x01\x23\x45\x67\x89\xAB\xCD\xEF'
-    plaintext = b'This is a variable length plaintext.'
-
-    # Encrypt the plaintext
+if __name__ == '__main__':
+    secret_key = input("Enter secret key: ") 
+    plaintext = bytes(input("Enter plaintext: "),encoding='utf-8')
+    
     ciphertext = encrypt(plaintext, secret_key)
-    print(f"Ciphertext: {ciphertext.hex()}")
-
-    # Decrypt the ciphertext
-    decrypted_plaintext = decrypt(ciphertext, secret_key)
-    print(f"Decrypted Plaintext: {decrypted_plaintext.decode('utf-8')}")
+    decrypted_text = decrypt(ciphertext, secret_key)
+    
+    print(f'Plaintext: {plaintext.decode("utf-8")}')
+    print(f'Ciphertext: {ciphertext.hex()}')
+    print(f'Decrypted Text: {decrypted_text.decode("utf-8")}')
