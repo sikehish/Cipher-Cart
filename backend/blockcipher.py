@@ -54,7 +54,7 @@ def faded_default_text(text):
     return f"\033[90m{text}\033[0m"
 
 def separator_line():
-    click.echo('-' * 60)
+    click.echo(colored('-' * 50, 'magenta'))
 
 def heading_text(text):
     return f"\n== {text} ==\n"

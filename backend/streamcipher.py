@@ -21,36 +21,80 @@ def decrypt(ciphertext, secret_key):
 def faded_default_text(text):
     return f"\033[90m{text}\033[0m"  # \033[90m sets text color to gray. It adds ANSI color codes to set the text color to gray
 
+def print_heading(heading):
+    click.echo(colored('\n' + heading, 'cyan'))
+
+def print_subtitle(subtitle):
+    click.echo(colored(subtitle, 'blue') + " ", nl=False)
+
+def print_content(content, color='white'):
+    click.echo(colored(content, color))
+
+def separator_line():
+    click.echo(colored('-' * 50, 'magenta'))
+
+def heading_text(text):
+    return f"== {text} ==\n"
+
 
 @click.command()
 def main():
     os.system('cls' if os.name == 'nt' else 'clear') #Clears the system console 
 
     banner = r'''
- ________  ___  ________  ___  ___  _______   ________          ________  ________  ________  _________   
-|\   ____\|\  \|\   __  \|\  \|\  \|\  ___ \ |\   __  \        |\   ____\|\   __  \|\   __  \|\___   ___\ 
-\ \  \___|\ \  \ \  \|\  \ \  \\\  \ \   __/|\ \  \|\  \       \ \  \___|\ \  \|\  \ \  \|\  \|___ \  \_| 
- \ \  \    \ \  \ \   ____\ \   __  \ \  \_|/_\ \   _  _\       \ \  \    \ \   __  \ \   _  _\   \ \  \  
-  \ \  \____\ \  \ \  \___|\ \  \ \  \ \  \_|\ \ \  \\  \|       \ \  \____\ \  \ \  \ \  \\  \|   \ \  \ 
-   \ \_______\ \__\ \__\    \ \__\ \__\ \_______\ \__\\ _\        \ \_______\ \__\ \__\ \__\\ _\    \ \__\
-    \|_______|\|__|\|__|     \|__|\|__|\|_______|\|__|\|__|        \|_______|\|__|\|__|\|__|\|__|    \|__|
+ ________  _________  ________  _______   ________  _____ ______           ________  ___  ________  ___  ___  _______   ________     
+|\   ____\|\___   ___\\   __  \|\  ___ \ |\   __  \|\   _ \  _   \        |\   ____\|\  \|\   __  \|\  \|\  \|\  ___ \ |\   __  \    
+\ \  \___|\|___ \  \_\ \  \|\  \ \   __/|\ \  \|\  \ \  \\\__\ \  \       \ \  \___|\ \  \ \  \|\  \ \  \\\  \ \   __/|\ \  \|\  \   
+ \ \_____  \   \ \  \ \ \   _  _\ \  \_|/_\ \   __  \ \  \\|__| \  \       \ \  \    \ \  \ \   ____\ \   __  \ \  \_|/_\ \   _  _\  
+  \|____|\  \   \ \  \ \ \  \\  \\ \  \_|\ \ \  \ \  \ \  \    \ \  \       \ \  \____\ \  \ \  \___|\ \  \ \  \ \  \_|\ \ \  \\  \| 
+    ____\_\  \   \ \__\ \ \__\\ _\\ \_______\ \__\ \__\ \__\    \ \__\       \ \_______\ \__\ \__\    \ \__\ \__\ \_______\ \__\\ _\ 
+   |\_________\   \|__|  \|__|\|__|\|_______|\|__|\|__|\|__|     \|__|        \|_______|\|__|\|__|     \|__|\|__|\|_______|\|__|\|__|
+   \|_________|                                                                                                                      
+                                                                                                                                                                                                                                                     
     '''
     
     click.echo(colored(banner, 'cyan'))
-    click.echo('Cipher Cart - Secure Data using Stream Cipher')
+    print_heading('Cipher Cart - Secure Data using Stream Cipher')
     click.echo('---------------------------------------------')
 
     secret_key = click.prompt('Enter Secret Key', default=faded_default_text(str(random.getrandbits(64))))
     plaintext = click.prompt('Enter Plain Text', default=faded_default_text('Hello World!'))
 
-    ciphertext = encrypt(plaintext.encode('utf-8'), secret_key)
-    decrypted_text = decrypt(ciphertext, secret_key)
+    separator_line()
+    print_heading(heading_text('Encryption Process'))
+    separator_line()
 
+    print_subtitle('Secret Key:')
+    print_content(secret_key, 'blue')
+    print_subtitle('Plaintext:')
+    print_content(plaintext, 'white')
+    print_heading('Generating Keystream...')
+    keystream = generate_keystream(secret_key, len(plaintext))
+    print_subtitle('Keystream:')
+    print_content(keystream.hex(), 'yellow')
     
-    click.echo(f'Ciphertext: {colored(ciphertext.hex(), "green")}')
-    click.echo(f'Decrypted Text: {colored(decrypted_text.decode("utf-8"), "green")}')
-    click.echo('---------------------------------------------')
+    print_heading('\nEncrypting, by performing xor on the keystream and plaintext...')
+    ciphertext = encrypt(plaintext.encode('utf-8'), secret_key)
 
+    print_subtitle('Ciphertext:')
+    print_content(ciphertext.hex(), 'green')
+
+    separator_line()
+    print_heading(heading_text('Decryption Process'))
+    separator_line()
+
+    print_heading('Generating Keystream...')
+    keystream = generate_keystream(secret_key, len(ciphertext))
+    print_subtitle('Keystream:')
+    print_content(keystream.hex(), 'yellow')
+    print_subtitle('Given Ciphertext:')
+    print_content(ciphertext.hex(), 'green')
+    print_heading('\nDecrypting, by performing xor on the keystream and cipher text...')
+    decrypted_text = decrypt(ciphertext, secret_key)
+    print_subtitle('Decrypted Text:')
+    print_content(decrypted_text.decode('utf-8'), 'green')
+
+    click.echo('---------------------------------------------')
 
 if __name__ == '__main__':
     main()
