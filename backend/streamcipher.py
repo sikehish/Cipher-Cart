@@ -21,8 +21,8 @@ def decrypt(ciphertext, secret_key):
 def faded_default_text(text):
     return f"\033[90m{text}\033[0m"  # \033[90m sets text color to gray. It adds ANSI color codes to set the text color to gray
 
-def print_heading(heading):
-    click.echo(colored('\n' + heading, 'cyan'))
+def print_heading(heading, color="cyan"):
+    click.echo(colored('\n' + heading, color))
 
 def print_subtitle(subtitle):
     click.echo(colored(subtitle, 'blue') + " ", nl=False)
@@ -61,35 +61,35 @@ def main():
     plaintext = click.prompt('Enter Plain Text', default=faded_default_text('Hello World!'))
 
     separator_line()
-    print_heading(heading_text('Encryption Process'))
+    print_heading(heading_text('Encryption Process'), color="red")
     separator_line()
 
     print_subtitle('Secret Key:')
     print_content(secret_key, 'blue')
     print_subtitle('Plaintext:')
     print_content(plaintext, 'white')
-    print_heading('Generating Keystream...')
+    print_heading('Generating Keystream...', color="grey")
     keystream = generate_keystream(secret_key, len(plaintext))
     print_subtitle('Keystream:')
     print_content(keystream.hex(), 'yellow')
     
-    print_heading('\nEncrypting, by performing xor on the keystream and plaintext...')
+    print_heading('\nEncrypting, by performing xor on the keystream and plaintext...', color="grey")
     ciphertext = encrypt(plaintext.encode('utf-8'), secret_key)
 
     print_subtitle('Ciphertext:')
     print_content(ciphertext.hex(), 'green')
 
     separator_line()
-    print_heading(heading_text('Decryption Process'))
+    print_heading(heading_text('Decryption Process'), color="red")
     separator_line()
 
-    print_heading('Generating Keystream...')
+    print_heading('Generating Keystream...', color="grey")
     keystream = generate_keystream(secret_key, len(ciphertext))
     print_subtitle('Keystream:')
     print_content(keystream.hex(), 'yellow')
     print_subtitle('Given Ciphertext:')
     print_content(ciphertext.hex(), 'green')
-    print_heading('\nDecrypting, by performing xor on the keystream and cipher text...')
+    print_heading('\nDecrypting, by performing xor on the keystream and cipher text...', color="grey")
     decrypted_text = decrypt(ciphertext, secret_key)
     print_subtitle('Decrypted Text:')
     print_content(decrypted_text.decode('utf-8'), 'green')
