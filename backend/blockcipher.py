@@ -5,14 +5,16 @@ import os
 
 def pad(plaintext):
     # Pad the plaintext to be a multiple of BLOCK_SIZE
+    # i.e  len(padded plaintext)%BLOCK_SIZE==0
     padding = BLOCK_SIZE - len(plaintext) % BLOCK_SIZE
+    print(len(plaintext), [padding] * padding)
     return plaintext + bytes([padding] * padding)
 
 def unpad(padded_text):
     # Remove the padding from the plaintext
     padding = padded_text[-1]
     if padding > 0 and padding <= BLOCK_SIZE:
-        return padded_text[:-padding]
+        return padded_text[:-padding] #removes the padding by slicing the padded_text from the beginning up to the last padding bytes, effectively removing the padding
     else:
         return padded_text
 
@@ -27,13 +29,13 @@ def decrypt_block(ciphertext_block, key):
     return bytes(c ^ k for c, k in zip(ciphertext_block, key))
 
 def encrypt(plaintext, key):
-    plaintext = pad(plaintext)
+    plaintext = pad(plaintext) #padding the plaintext such that len(padded plaintext)%BLOCK_SIZE=0
     ciphertext = b'' # empty byte string at the start
 
     for i in range(0, len(plaintext), BLOCK_SIZE):
-        block = plaintext[i:i + BLOCK_SIZE]
-        ciphertext_block = encrypt_block(block, key)
-        ciphertext += ciphertext_block
+        block = plaintext[i:i + BLOCK_SIZE] # Obtaining blocks of size BLOCK_SIZE
+        ciphertext_block = encrypt_block(block, key) # Encrypting those blocks
+        ciphertext += ciphertext_block # Appending those encrypted blocks to ciphertext
 
     return ciphertext
 
