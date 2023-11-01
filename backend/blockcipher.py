@@ -29,7 +29,7 @@ def encrypt(plaintext, key):
 
     for i in range(0, len(plaintext), BLOCK_SIZE):
         block = plaintext[i:i + BLOCK_SIZE]
-        click.echo(f'{print_content("Decrypting Block " + str(i // BLOCK_SIZE + 1), "white", True)} ({len(block)} bytes):')
+        click.echo(f'{print_content("Enrypting Block " + str(i // BLOCK_SIZE + 1), "white", True)} ({len(block)} bytes):')
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Plain Text): {print_content(block.hex(),"green",True)}')
         ciphertext_block = encrypt_block(block, key)
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {print_content(ciphertext_block.hex(), "magenta", True)}\n')
@@ -45,6 +45,7 @@ def decrypt(ciphertext, key):
         click.echo(f'{print_content("Decrypting Block " + str(i // BLOCK_SIZE + 1), "white", True)} ({len(ciphertext_block)} bytes):')
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {print_content(ciphertext_block.hex(),"green",True)}')
         block = decrypt_block(ciphertext_block, key)
+        print(unpad(block).decode("utf-8"))
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Decrypted): {print_content(block.hex(), "magenta", True)} ({colored(unpad(block).decode("utf-8"), "yellow")})\n')
         plaintext += block
 
