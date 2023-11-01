@@ -32,7 +32,7 @@ def encrypt(plaintext, key):
         click.echo(f'Encrypting Block {i // BLOCK_SIZE + 1} (Size {len(block)} bytes):')
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Plain Text): {block.hex()}')
         ciphertext_block = encrypt_block(block, key)
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {ciphertext_block.hex()}')
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {ciphertext_block.hex()}\n')
         ciphertext += ciphertext_block
 
     return ciphertext
@@ -45,7 +45,7 @@ def decrypt(ciphertext, key):
         click.echo(f'Decrypting Block {i // BLOCK_SIZE + 1} (Size {len(ciphertext_block)} bytes):')
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {ciphertext_block.hex()}')
         block = decrypt_block(ciphertext_block, key)
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Decrypted): {block.hex()}')
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Decrypted): {block.hex()} ({colored(unpad(block).decode("utf-8"), "yellow")})\n')
         plaintext += block
 
     return unpad(plaintext)
@@ -89,13 +89,14 @@ def main():
     click.echo(heading_text('Encryption Process'))
     separator_line()
     ciphertext = encrypt(plaintext.encode('utf-8'), key)
-    click.echo(f'Ciphertext: {colored(ciphertext.hex(), "green")}')
+    click.echo(f'\nCiphertext: {colored(ciphertext.hex(), "green")}')
 
     separator_line()
     click.echo(heading_text('Decryption Process'))
     separator_line()
     decrypted_text = decrypt(ciphertext, key)
-    click.echo(f'Decrypted Text: {colored(decrypted_text.decode("utf-8"), "green")}')
+    click.echo(f'\nDecrypted Text: {colored(decrypted_text.decode("utf-8"), "green")}')
 
 if __name__ == '__main__':
     main()
+
