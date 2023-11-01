@@ -29,10 +29,10 @@ def encrypt(plaintext, key):
 
     for i in range(0, len(plaintext), BLOCK_SIZE):
         block = plaintext[i:i + BLOCK_SIZE]
-        click.echo(f'Encrypting Block {i // BLOCK_SIZE + 1} (Size {len(block)} bytes):')
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Plain Text): {block.hex()}')
+        click.echo(f'{print_content("Decrypting Block " + str(i // BLOCK_SIZE + 1), "white", True)} ({len(block)} bytes):')
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Plain Text): {print_content(block.hex(),"green",True)}')
         ciphertext_block = encrypt_block(block, key)
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {ciphertext_block.hex()}\n')
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {print_content(ciphertext_block.hex(), "magenta", True)}\n')
         ciphertext += ciphertext_block
 
     return ciphertext
@@ -42,10 +42,10 @@ def decrypt(ciphertext, key):
 
     for i in range(0, len(ciphertext), BLOCK_SIZE):
         ciphertext_block = ciphertext[i:i + BLOCK_SIZE]
-        click.echo(f'Decrypting Block {i // BLOCK_SIZE + 1} (Size {len(ciphertext_block)} bytes):')
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {ciphertext_block.hex()}')
+        click.echo(f'{print_content("Decrypting Block " + str(i // BLOCK_SIZE + 1), "white", True)} ({len(ciphertext_block)} bytes):')
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {print_content(ciphertext_block.hex(),"green",True)}')
         block = decrypt_block(ciphertext_block, key)
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Decrypted): {block.hex()} ({colored(unpad(block).decode("utf-8"), "yellow")})\n')
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Decrypted): {print_content(block.hex(), "magenta", True)} ({colored(unpad(block).decode("utf-8"), "yellow")})\n')
         plaintext += block
 
     return unpad(plaintext)
@@ -57,7 +57,20 @@ def separator_line():
     click.echo(colored('-' * 50, 'magenta'))
 
 def heading_text(text):
-    return f"\n== {text} ==\n"
+    return f"== {text} ==\n"
+
+def print_heading(heading):
+    click.echo(colored('\n' + heading, 'red'))
+
+def print_subtitle(subtitle):
+    click.echo(colored(subtitle, 'blue'))
+
+def print_content(content, color='white', is_in_echo=False):
+    if is_in_echo:
+        return colored(content, color)
+    else :
+        click.echo(colored(content, color))
+
 
 @click.command()
 def main():
@@ -76,8 +89,8 @@ def main():
     
     
     click.echo(colored(banner, 'cyan'))
-    click.echo('Cipher Cart - Secure Data using Block Cipher')
-    click.echo('---------------------------------------------')
+    print_heading('Cipher Cart - Secure Data using Block Cipher')
+    separator_line()
 
     global BLOCK_SIZE
     BLOCK_SIZE = click.prompt('Enter Block Size', type=int, default=16)
@@ -85,19 +98,21 @@ def main():
     key = generate_key(BLOCK_SIZE)
     plaintext = click.prompt('Enter Plain Text', default=faded_default_text('Hello World!'))
 
-    click.echo(f'Secret Key: {key.hex()}')
+    print_subtitle('Secret Key:')
+    print_content(key.hex(), 'dark_grey')
     
     separator_line()
-    click.echo(heading_text('Encryption Process'))
+    print_heading(heading_text('Encryption Process'))
     separator_line()
     ciphertext = encrypt(plaintext.encode('utf-8'), key)
     click.echo(f'\nCiphertext: {colored(ciphertext.hex(), "green")}')
 
     separator_line()
-    click.echo(heading_text('Decryption Process'))
+    print_heading(heading_text('Decryption Process'))
     separator_line()
     decrypted_text = decrypt(ciphertext, key)
     click.echo(f'\nDecrypted Text: {colored(decrypted_text.decode("utf-8"), "green")}')
+    separator_line()
 
 if __name__ == '__main__':
     main()
