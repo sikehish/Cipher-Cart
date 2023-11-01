@@ -26,11 +26,10 @@ def decrypt_block(ciphertext_block, key):
 def encrypt(plaintext, key):
     plaintext = pad(plaintext)
     ciphertext = b''
-
     for i in range(0, len(plaintext), BLOCK_SIZE):
         block = plaintext[i:i + BLOCK_SIZE]
         click.echo(f'{print_content("Enrypting Block " + str(i // BLOCK_SIZE + 1), "white", True)} ({len(block)} bytes):')
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Plain Text): {print_content(block.hex(),"green",True)} ({colored(block.decode("utf-8"), "grey")})\n')
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Plain Text): {print_content(block.hex(),"green",True)} ({colored(block.decode("utf-8"), "grey")})')
         ciphertext_block = encrypt_block(block, key)
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {print_content(ciphertext_block.hex(), "magenta", True)}\n')
         ciphertext += ciphertext_block
@@ -45,8 +44,15 @@ def decrypt(ciphertext, key):
         click.echo(f'{print_content("Decrypting Block " + str(i // BLOCK_SIZE + 1), "white", True)} ({len(ciphertext_block)} bytes):')
         click.echo(f'Block {i // BLOCK_SIZE + 1} (Encrypted): {print_content(ciphertext_block.hex(),"green",True)}')
         block = decrypt_block(ciphertext_block, key)
-        print(unpad(block).decode("utf-8"))
-        click.echo(f'Block {i // BLOCK_SIZE + 1} (Decrypted): {print_content(block.hex(), "magenta", True)} ({colored(unpad(block).decode("utf-8"), "yellow")})\n')
+
+        text_content=""
+        if not unpad(block).decode("utf-8"): 
+            text_content=colored("This block consists of padded bits","light_cyan")
+        else:
+            text_content=colored(unpad(block).decode("utf-8"), "yellow")
+
+        click.echo(f'Block {i // BLOCK_SIZE + 1} (Decrypted): {print_content(block.hex(), "magenta", True)} ({text_content})\n')
+        
         plaintext += block
 
     return unpad(plaintext)
@@ -64,7 +70,7 @@ def print_heading(heading):
     click.echo(colored('\n' + heading, 'red'))
 
 def print_subtitle(subtitle):
-    click.echo(colored(subtitle, 'blue'))
+    click.echo(colored(subtitle, 'blue'), nl=False)
 
 def print_content(content, color='white', is_in_echo=False):
     if is_in_echo:
@@ -99,7 +105,7 @@ def main():
     key = generate_key(BLOCK_SIZE)
     plaintext = click.prompt('Enter Plain Text', default=faded_default_text('Hello World!'))
 
-    print_subtitle('Secret Key:')
+    print_subtitle('Secret Key: ')
     print_content(key.hex(), 'dark_grey')
     
     separator_line()

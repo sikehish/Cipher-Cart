@@ -64,7 +64,7 @@ def main():
     print_heading(heading_text('Encryption Process'), color="red")
     separator_line()
 
-    print_subtitle('Secret Key:')
+    print_subtitle('Secret Key: ')
     print_content(secret_key, 'blue')
     print_subtitle('Plaintext:')
     print_content(plaintext, 'white')
