@@ -64,7 +64,7 @@ def main():
     # Key Generation
     public_key, private_key = elgamal_key_generation()
 
-    plaintext = int(input("Enter plaintext message: "))
+    plaintext = int(input("Enter plaintext message (Plaintext should be less than the previously entered prime number): "))
 
     # Encryption
     ciphertext = elgamal_encryption(public_key, plaintext)
