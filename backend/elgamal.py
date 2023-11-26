@@ -1,66 +1,72 @@
 import random
+from sympy import primitive_root, isprime
 
-def mod_exp(base, exponent, modulus):
-    result = 1
-    while exponent > 0:
-        if exponent % 2 == 1:
-            result = (result * base) % modulus
-        base = (base * base) % modulus
-        exponent = exponent // 2
-    return result
+def mod_exp(base, exp, mod):
+    # Modular exponentiation function
+    return pow(base, exp, mod)
 
 def elgamal_key_generation():
-    # Step 1: Key Generation
-    p = 23  # Replace with a large prime number
+    # Key generation
+    p = 997  # Replace with a large prime in practice
+
+    # Ensure that p is prime
+    while not isprime(p):
+        p = random.randint(1000, 100000)  # Adjust the range as needed
+
+    # Choose a primitive root of p
+    e1 = primitive_root(p)
+
     d = random.randint(1, p - 2)
-    e1 = random.choice([i for i in range(2, p) if pow(i, p - 1, p) == 1])
     e2 = mod_exp(e1, d, p)
 
-    # Public Key: (e1, e2, p)
     public_key = (e1, e2, p)
-    # Private Key: d
     private_key = d
+
+    print("Key Generation:")
+    print(f"Public Key (e1, e2, p): {public_key}")
+    print(f"Private Key (d): {private_key}\n")
 
     return public_key, private_key
 
-def elgamal_encryption(public_key, plaintext):
-    e1, e2, p = public_key
-    # Step 2: Encryption
-    r = random.randint(1, p - 2)
-    C1 = mod_exp(e1, r, p)
-    C2 = (plaintext * mod_exp(e2, r, p)) % p
 
-    # Ciphertext: (C1, C2)
-    ciphertext = (C1, C2)
-    return ciphertext
+def elgamal_encryption(public_key, plaintext):
+    # Encryption
+    e1, e2, p = public_key
+    r = random.randint(1, p - 2)
+
+    C1 = mod_exp(e1, r, p)
+    C2 = (plaintext * pow(e2, r)) % p
+
+    print("Encryption:")
+    print(f"Ciphertext (C1, C2): ({C1}, {C2})\n")
+
+    return C1, C2
 
 def elgamal_decryption(private_key, public_key, ciphertext):
-    d, p = private_key, public_key[2]
+    # Decryption
+    d = private_key
+    e1,e2,p=public_key
     C1, C2 = ciphertext
-    # Step 3: Decryption
-    inv_C1 = mod_exp(C1, p - 1 - d, p)
+
+    inv_C1 = pow(C1, p - 1 - d)
     plaintext = (C2 * inv_C1) % p
+
+    print("Decryption:")
+    print(f"Decrypted Plaintext: {plaintext}\n")
+
     return plaintext
 
 def main():
-    # Take plaintext input
-    plaintext = int(input("Enter the plaintext message: "))
+    plaintext = int(input("Enter plaintext message: "))
 
     # Key Generation
     public_key, private_key = elgamal_key_generation()
-    print("\nKey Generation:")
-    print(f"Public Key (e1, e2, p): {public_key}")
-    print(f"Private Key (d): {private_key}")
 
     # Encryption
     ciphertext = elgamal_encryption(public_key, plaintext)
-    print("\nEncryption:")
-    print(f"Ciphertext (C1, C2): {ciphertext}")
 
     # Decryption
     decrypted_plaintext = elgamal_decryption(private_key, public_key, ciphertext)
-    print("\nDecryption:")
-    print(f"Decrypted Plaintext: {decrypted_plaintext}")
 
 if __name__ == "__main__":
     main()
