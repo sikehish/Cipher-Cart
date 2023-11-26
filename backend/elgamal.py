@@ -1,5 +1,5 @@
 import random
-from sympy import primitive_root, isprime
+from sympy import primitive_root, isprime,randprime
 
 def mod_exp(base, exp, mod):
     # Modular exponentiation function
@@ -7,11 +7,15 @@ def mod_exp(base, exp, mod):
 
 def elgamal_key_generation():
     # Key generation
-    p = 997  # Replace with a large prime in practice
+    p=int(input("Enter a large prime number(>100): "))
+    while p<100:
+        p=int(input("Enter a large prime number(>100) PLEASE!: "))
 
     # Ensure that p is prime
-    while not isprime(p):
-        p = random.randint(1000, 100000)  # Adjust the range as needed
+    if not isprime(p):
+      print(f"\n{p} is not prime.")
+      p=randprime(10000, 1000000)
+      print(f"{p} is the new prime number generated.")
 
     # Choose a primitive root of p
     e1 = primitive_root(p)
@@ -22,7 +26,7 @@ def elgamal_key_generation():
     public_key = (e1, e2, p)
     private_key = d
 
-    print("Key Generation:")
+    print("\n\nKey Generation:")
     print(f"Public Key (e1, e2, p): {public_key}")
     print(f"Private Key (d): {private_key}\n")
 
@@ -57,10 +61,10 @@ def elgamal_decryption(private_key, public_key, ciphertext):
     return plaintext
 
 def main():
-    plaintext = int(input("Enter plaintext message: "))
-
     # Key Generation
     public_key, private_key = elgamal_key_generation()
+
+    plaintext = int(input("Enter plaintext message: "))
 
     # Encryption
     ciphertext = elgamal_encryption(public_key, plaintext)
